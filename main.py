@@ -107,7 +107,7 @@ def getContent(html):
     bsobj = bs4.BeautifulSoup(html, "html.parser")
 
     # 获取文章 标题
-    title = bsobj.h3.text + "\n" + bsobj.h1.text + "\n" + bsobj.h2.text + "\n"
+    title = bsobj.h3.text + "\t" + bsobj.h1.text + "\t" + bsobj.h2.text + "\n"
     # print(title)
 
     # 获取文章 内容
@@ -117,8 +117,12 @@ def getContent(html):
         content += p.text + "\n"
     # print(content)
 
-    # 返回结果 标题+内容
-    resp = title + content
+    # 获取文章 作者
+    temp = bsobj.find("span", attrs={"class": "date"}).previous_sibling.text.strip()
+    author = temp if temp == "" else "\n" + temp
+
+    # 返回结果 标题 + 内容 + 作者
+    resp = title + "\n" + content + author
     return resp
 
 
@@ -159,6 +163,9 @@ def download_rmrb(year, month, day, destdir):
 
             # 保存文件
             saveFile(content, path, fileName)
+
+            # 爬完一篇续一秒
+            time.sleep(1)
 
 
 def gen_dates(b_date, days):
